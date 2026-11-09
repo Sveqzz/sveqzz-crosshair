@@ -1,0 +1,32 @@
+{
+  "name": "sveqzz-crosshair",
+  "productName": "Sveqzz Crosshair",
+  "version": "1.0.0",
+  "description": "Overlay de crosshair gratuito con diseñador y comunidad",
+  "author": "Sveqzz",
+  "main": "main.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis portable"
+  },
+  "build": {
+    "appId": "com.sveqzz.crosshair",
+    "productName": "Sveqzz Crosshair",
+    "directories": { "output": "dist", "buildResources": "build" },
+    "files": ["main.js", "preload.js", "config.json", "renderer/**", "build/icon.png", "package.json"],
+    "win": { "icon": "build/icon.png", "signAndEditExecutable": false },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Sveqzz Crosshair",
+      "artifactName": "SveqzzCrosshair-Setup-${version}.exe"
+    },
+    "portable": { "artifactName": "SveqzzCrosshair-Portable-${version}.exe" }
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  }
+}
