@@ -10,24 +10,8 @@
 </head>
 <body>
 <canvas id="c"></canvas>
+<!-- Los scripts van en archivos aparte: la política de seguridad (CSP) bloquea el código escrito dentro del HTML. -->
 <script src="crosshair.js"></script>
-<script>
-  const cv = document.getElementById('c');
-  const ctx = cv.getContext('2d');
-  let state = null;
-  function render() {
-    // Tamaño en píxeles físicos para que cada línea caiga exacta en el píxel central.
-    const dpr = window.devicePixelRatio || 1;
-    const w = Math.round(innerWidth * dpr), h = Math.round(innerHeight * dpr);
-    if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; cv.style.width = innerWidth + 'px'; cv.style.height = innerHeight + 'px'; }
-    ctx.clearRect(0, 0, w, h);
-    if (!state) return;
-    const cx = Math.floor(w / 2) + (state.offsetX || 0);
-    const cy = Math.floor(h / 2) + (state.offsetY || 0);
-    Crosshair.draw(ctx, state.crosshair, cx, cy, { redraw: render });
-  }
-  window.af.onOverlay((d) => { state = d; render(); });
-  window.addEventListener('resize', render);
-</script>
+<script src="overlay.js"></script>
 </body>
 </html>

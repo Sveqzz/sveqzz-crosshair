@@ -16,7 +16,12 @@ function toast(msg) {
 async function setState(patch) { S = await window.af.setState(patch); renderChrome(); return S; }
 const activeX = () => S.profiles[S.active];
 
+// Redibuja las miniaturas cuando cambia su tamaño (maximizar, pantalla completa…); si no, se estiran.
+const thumbObserver = new ResizeObserver((entries) => {
+  for (const e of entries) if (e.target._xhair && e.contentRect.width) drawThumb(e.target, e.target._xhair);
+});
 function drawThumb(canvas, c) {
+  if (canvas._xhair !== c) { canvas._xhair = c; thumbObserver.observe(canvas); }
   const dpr = window.devicePixelRatio || 1;
   const w = canvas.clientWidth || 170, h = canvas.clientHeight || 110;
   canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
