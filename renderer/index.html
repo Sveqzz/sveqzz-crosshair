@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'">
+<title>Sveqzz Crosshair</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="brand"><span class="logo"></span>Sveqzz Crosshair</div>
+  <nav>
+    <div class="nav-label">Crosshairs</div>
+    <button data-page="discover" class="active">Descubrir</button>
+    <button data-page="browse">Explorar</button>
+    <button data-page="saved">Guardados</button>
+    <button data-page="profiles">Mis perfiles</button>
+    <div class="nav-label">Crear</div>
+    <button data-page="designer">Diseñador</button>
+    <div class="nav-label">App</div>
+    <button data-page="settings">Ajustes</button>
+  </nav>
+  <div class="sidebar-foot">Gratis · Código abierto</div>
+</aside>
+
+<main>
+  <header class="topbar">
+    <select id="profileSelect" title="Perfil activo"></select>
+    <div class="spacer"></div>
+    <button class="ghost" id="btnShare">Compartir</button>
+    <button class="ghost" id="btnImport">Importar</button>
+    <label class="toggle" title="Mostrar/ocultar mira (Ctrl+Shift+H)">
+      <input type="checkbox" id="visibleToggle"><span></span><em id="visibleLabel">Visible</em>
+    </label>
+  </header>
+
+  <!-- DESCUBRIR -->
+  <section class="page active" id="page-discover">
+    <div class="hero">
+      <canvas id="heroCanvas" width="140" height="140"></canvas>
+      <div>
+        <h1>Tu mira, tus reglas.</h1>
+        <p>Diseña, comparte y descubre crosshairs creados por la comunidad. 100% gratis.</p>
+        <div class="row">
+          <button data-goto="browse">Explorar</button>
+          <button data-goto="designer" class="ghost">Diseñador</button>
+          <button id="btnSurprise" class="ghost">Sorpréndeme</button>
+        </div>
+      </div>
+    </div>
+    <h2>Selección del día</h2>
+    <div class="grid" id="pickGrid"></div>
+    <h2>Más votados</h2>
+    <div class="grid" id="topGrid"></div>
+    <h2>Recién subidos</h2>
+    <div class="grid" id="newGrid"></div>
+  </section>
+
+  <!-- EXPLORAR -->
+  <section class="page" id="page-browse">
+    <div class="browse">
+      <div class="filters">
+        <div class="nav-label">Juegos</div>
+        <div id="gameFilters"></div>
+        <div class="nav-label">Colecciones</div>
+        <div id="tagFilters"></div>
+      </div>
+      <div class="browse-main">
+        <div class="row">
+          <input id="searchInput" placeholder="Buscar crosshairs o autores…">
+          <select id="sortSelect">
+            <option value="top">Mejor valorados</option>
+            <option value="new">Más recientes</option>
+          </select>
+        </div>
+        <div class="grid" id="browseGrid"></div>
+        <button class="ghost more" id="btnMore">Cargar más</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- GUARDADOS -->
+  <section class="page" id="page-saved">
+    <h2>Guardados</h2>
+    <div class="grid" id="savedGrid"></div>
+  </section>
+
+  <!-- PERFILES -->
+  <section class="page" id="page-profiles">
+    <div class="row"><h2 class="grow">Mis perfiles</h2><button id="btnNewProfile">+ Nuevo perfil</button></div>
+    <p class="muted">Cambia de perfil en el juego con <kbd>Ctrl+Shift+←/→</kbd>.</p>
+    <div class="grid" id="profilesGrid"></div>
+  </section>
+
+  <!-- DISEÑADOR -->
+  <section class="page" id="page-designer">
+    <div class="designer">
+      <div class="preview">
+        <canvas id="designCanvas"></canvas>
+        <div class="preview-bar">
+          <select id="bgSelect">
+            <option value="dark">Fondo oscuro</option>
+            <option value="light">Fondo claro</option>
+            <option value="sky">Cielo</option>
+            <option value="grass">Pasto</option>
+            <option value="check">Cuadrícula</option>
+          </select>
+          <label>Zoom <input type="range" id="zoomRange" min="1" max="8" value="4"></label>
+        </div>
+      </div>
+      <div class="controls" id="controls"></div>
+    </div>
+  </section>
+
+  <!-- AJUSTES -->
+  <section class="page" id="page-settings">
+    <h2>Ajustes</h2>
+    <div class="card form">
+      <label>Tu nombre de creador <input id="authorInput" maxlength="24" placeholder="Ej: ElPro_99"></label>
+      <label>Servidor de comunidad <input id="serverInput" placeholder="http://localhost:8787"></label>
+      <div class="row"><button class="ghost" id="btnTestServer">Probar conexión</button><span id="serverStatus" class="muted"></span></div>
+      <label>Pantalla <select id="displaySelect"></select></label>
+      <div class="row">
+        <label>Desplazamiento X <input type="number" id="offX" min="-500" max="500"></label>
+        <label>Desplazamiento Y <input type="number" id="offY" min="-500" max="500"></label>
+      </div>
+      <div class="nav-label">Atajos globales</div>
+      <label>Mostrar/ocultar <input id="hkToggle"></label>
+      <label>Perfil siguiente <input id="hkNext"></label>
+      <label>Perfil anterior <input id="hkPrev"></label>
+      <button id="btnSaveSettings">Guardar ajustes</button>
+      <p class="muted">Consejo: usa el juego en modo <b>Ventana sin bordes</b> para que la mira se vea encima. En pantalla completa exclusiva ningún overlay externo puede dibujarse.</p>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="modal"><div class="modal-box" id="modalBox"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="crosshair.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
