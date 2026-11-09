@@ -98,9 +98,12 @@ function createOverlay() {
     x: b.x, y: b.y, width: b.width, height: b.height,
     transparent: true, frame: false, resizable: false, movable: false,
     focusable: false, skipTaskbar: true, hasShadow: false, show: false,
-    alwaysOnTop: true, fullscreenable: false,
+    alwaysOnTop: true, fullscreenable: false, enableLargerThanScreen: true,
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false }
   });
+  // Windows recorta la ventana a la zona sin barra de tareas; si pasa, se recalcula el centro real.
+  overlayWin.on('resize', pushOverlay);
+  overlayWin.on('move', pushOverlay);
   // Nivel más alto posible y la ventana deja pasar todos los clics: nunca interfiere con el juego.
   overlayWin.setAlwaysOnTop(true, 'screen-saver');
   overlayWin.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
@@ -119,14 +122,23 @@ function repositionOverlay() {
 
 function pushOverlay() {
   if (!overlayWin || overlayWin.isDestroyed()) return;
+  // Centro exacto de la pantalla, medido desde la esquina de la ventana (en píxeles CSS).
+  const d = targetDisplay().bounds, w = overlayWin.getContentBounds();
   overlayWin.webContents.send('overlay:update', {
     crosshair: store.profiles[store.active],
-    offsetX: store.offsetX, offsetY: store.offsetY
+    offsetX: store.offsetX, offsetY: store.offsetY,
+    centerX: d.x + d.width / 2 - w.x,
+    centerY: d.y + d.height / 2 - w.y
   });
 }
 function applyVisibility() {
   if (!overlayWin) return;
-  if (store.visible) overlayWin.showInactive(); else overlayWin.hide();
+  if (store.visible) {
+    overlayWin.showInactive();
+    const b = targetDisplay().bounds, cur = overlayWin.getBounds();
+    if (cur.width !== b.width || cur.height !== b.height || cur.x !== b.x || cur.y !== b.y) overlayWin.setBounds(b);
+    overlayWin.setAlwaysOnTop(true, 'screen-saver');
+  } else overlayWin.hide();
 }
 function broadcastState() {
   if (createTray.rebuild) createTray.rebuild();
